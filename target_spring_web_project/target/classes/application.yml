@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: target-svc
+server:
+  port: 8081
+
+debugflow:
+  enabled: false   # start disabled; enable via POST /api/session/enable
+  ttlMinutes: 20
+  consoleJson: false
+  consolePretty: true
+  color: true
+  prettyFile: debugflow.log
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

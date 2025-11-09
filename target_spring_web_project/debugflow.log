@@ -1,0 +1,32 @@
+2025-11-09 19:03:47   [0807ef81] target-svc     com.example.target.scenarios.ScenarioController#chain3  -->
+2025-11-09 19:03:47     [0807ef81] target-svc     com.example.target.scenarios.ChainServices#a  -->
+2025-11-09 19:03:47       [0807ef81] target-svc     com.example.target.scenarios.ChainBService#b  -->
+2025-11-09 19:03:47         [0807ef81] target-svc     com.example.target.scenarios.ChainCService#c  -->
+2025-11-09 19:03:47         [0807ef81] target-svc     com.example.target.scenarios.ChainCService#c  <--   11ms
+2025-11-09 19:03:47       [0807ef81] target-svc     com.example.target.scenarios.ChainBService#b  <--   25ms
+2025-11-09 19:03:47     [0807ef81] target-svc     com.example.target.scenarios.ChainServices#a  <--   39ms
+2025-11-09 19:03:47   [0807ef81] target-svc     com.example.target.scenarios.ScenarioController#chain3  <--   41ms
+2025-11-09 19:04:00   [6f7464fc] target-svc     com.example.target.scenarios.ScenarioController#fanout  -->
+2025-11-09 19:04:00     [6f7464fc] target-svc     com.example.target.scenarios.FanoutServices#merge  -->
+2025-11-09 19:04:00   [6f7464fc] target-svc     com.example.target.scenarios.FanoutWorker#alpha  -->
+2025-11-09 19:04:00   [6f7464fc] target-svc     com.example.target.scenarios.FanoutWorker#beta  -->
+2025-11-09 19:04:00   [6f7464fc] target-svc     com.example.target.scenarios.FanoutWorker#alpha  <--   18ms
+2025-11-09 19:04:00   [6f7464fc] target-svc     com.example.target.scenarios.FanoutWorker#beta  <--   20ms
+2025-11-09 19:04:00     [6f7464fc] target-svc     com.example.target.scenarios.FanoutServices#merge  <--   25ms
+2025-11-09 19:04:00   [6f7464fc] target-svc     com.example.target.scenarios.ScenarioController#fanout  <--   26ms
+2025-11-09 19:04:15   [2fc2c5a6] target-svc     com.example.target.scenarios.ScenarioController#callable  -->
+2025-11-09 19:04:15   [2fc2c5a6] target-svc     com.example.target.scenarios.ScenarioController#callable  <--    0ms
+2025-11-09 19:04:15   [2fc2c5a6] target-svc     com.example.target.scenarios.ChainBService#b  -->
+2025-11-09 19:04:15     [2fc2c5a6] target-svc     com.example.target.scenarios.ChainCService#c  -->
+2025-11-09 19:04:15     [2fc2c5a6] target-svc     com.example.target.scenarios.ChainCService#c  <--   12ms
+2025-11-09 19:04:15   [2fc2c5a6] target-svc     com.example.target.scenarios.ChainBService#b  <--   27ms
+2025-11-09 19:04:57   [146c364e] target-svc     com.example.target.scenarios.ScenarioController#exception  -->
+2025-11-09 19:04:57   [146c364e] target-svc     com.example.target.scenarios.ScenarioController#exception  <--    0ms  IllegalStateException
+2025-11-09 19:05:04   [d4051ced] target-svc     com.example.target.scenarios.ScenarioController#async  -->
+2025-11-09 19:05:04   [d4051ced] target-svc     com.example.target.scenarios.FanoutServices#asyncWork  -->
+2025-11-09 19:05:04   [d4051ced] target-svc     com.example.target.scenarios.FanoutServices#asyncWork  -->
+2025-11-09 19:05:04   [d4051ced] target-svc     com.example.target.scenarios.FanoutServices#asyncWork  -->
+2025-11-09 19:05:04   [d4051ced] target-svc     com.example.target.scenarios.FanoutServices#asyncWork  <--   28ms
+2025-11-09 19:05:04   [d4051ced] target-svc     com.example.target.scenarios.FanoutServices#asyncWork  <--   30ms
+2025-11-09 19:05:04   [d4051ced] target-svc     com.example.target.scenarios.FanoutServices#asyncWork  <--   30ms
+2025-11-09 19:05:04   [d4051ced] target-svc     com.example.target.scenarios.ScenarioController#async  <--   36ms
