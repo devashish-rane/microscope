@@ -20,10 +20,23 @@ public class SessionManager {
     private volatile ScheduledFuture<?> expiryTask;
 
     public synchronized void enable(Duration ttl) {
+        if (ttl == null || ttl.isZero() || ttl.isNegative()) {
+            enableInfinite();
+            return;
+        }
         this.active = true;
         this.expiresAt = Instant.now().plus(ttl);
         if (expiryTask != null) expiryTask.cancel(false);
         expiryTask = scheduler.schedule(this::disable, ttl.toMillis(), TimeUnit.MILLISECONDS);
+    }
+
+    public synchronized void enableInfinite() {
+        this.active = true;
+        this.expiresAt = null;
+        if (expiryTask != null) {
+            expiryTask.cancel(false);
+            expiryTask = null;
+        }
     }
 
     public synchronized void disable() {
@@ -54,4 +67,3 @@ public class SessionManager {
         return Optional.of(d);
     }
 }
-

@@ -26,19 +26,30 @@ public class SessionController {
     @GetMapping
     public Map<String, Object> get() {
         Map<String, Object> out = new HashMap<>();
-        out.put("active", sessionManager.isActive());
-        sessionManager.ttlRemaining().ifPresentOrElse(d -> out.put("ttlSeconds", d.toSeconds()),
-                () -> out.put("ttlSeconds", 0));
+        boolean active = sessionManager.isActive();
+        out.put("active", active);
+        var rem = sessionManager.ttlRemaining();
+        if (active && rem.isEmpty()) {
+            out.put("ttlSeconds", -1); // infinite
+        } else {
+            rem.ifPresentOrElse(d -> out.put("ttlSeconds", d.toSeconds()), () -> out.put("ttlSeconds", 0));
+        }
         return out;
     }
 
     @PostMapping("/enable")
     public ResponseEntity<?> enable(@RequestBody(required = false) Map<String, Object> body) {
-        int ttl = defaultTtlMinutes;
+        Integer ttl = null;
         if (body != null && body.get("ttlMinutes") instanceof Number n) {
             ttl = n.intValue();
+        } else {
+            ttl = defaultTtlMinutes;
         }
-        sessionManager.enable(Duration.ofMinutes(ttl));
+        if (ttl == null || ttl <= 0) {
+            sessionManager.enableInfinite();
+        } else {
+            sessionManager.enable(Duration.ofMinutes(ttl));
+        }
         return ResponseEntity.ok(get());
     }
 
@@ -48,4 +59,3 @@ public class SessionController {
         return ResponseEntity.ok(get());
     }
 }
-

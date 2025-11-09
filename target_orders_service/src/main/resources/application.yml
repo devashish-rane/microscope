@@ -8,8 +8,8 @@ orders:
   useTestcontainers: true
 
 debugflow:
-  enabled: false
-  ttlMinutes: 20
+  enabled: true     # auto-on; no POST needed
+  ttlMinutes: -1    # <=0 means infinite (no expiry)
   consoleJson: false
   consolePretty: true
   color: true

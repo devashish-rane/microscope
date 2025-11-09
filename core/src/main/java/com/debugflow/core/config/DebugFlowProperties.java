@@ -6,8 +6,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class DebugFlowProperties {
     /** Default enable state on startup. Runtime toggle still possible via API. */
     private boolean enabled = false;
-    /** Default TTL in minutes when session enabled. */
-    private int ttlMinutes = 20;
+    /** Default TTL in minutes when session enabled. <=0 means infinite. */
+    private int ttlMinutes = -1;
     /** Optional cap for number of traces stored (not used in MVP). */
     private int maxTraces = 500;
     /** Emit compact JSON lines to console logger. */

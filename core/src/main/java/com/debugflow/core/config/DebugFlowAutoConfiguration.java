@@ -39,7 +39,8 @@ public class DebugFlowAutoConfiguration {
     public SessionManager sessionManager(DebugFlowProperties props) {
         SessionManager sm = new SessionManager();
         if (props.isEnabled()) {
-            sm.enable(Duration.ofMinutes(props.getTtlMinutes()));
+            int ttl = props.getTtlMinutes();
+            if (ttl <= 0) sm.enableInfinite(); else sm.enable(Duration.ofMinutes(ttl));
         }
         return sm;
     }

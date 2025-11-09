@@ -5,8 +5,8 @@ server:
   port: 8081
 
 debugflow:
-  enabled: false   # start disabled; enable via POST /api/session/enable
-  ttlMinutes: 20
+  enabled: true    # auto-on; no POST needed
+  ttlMinutes: -1   # <=0 means infinite (no expiry)
   consoleJson: false
   consolePretty: true
   color: true
