@@ -1,8 +1,10 @@
 package com.example.target.scenarios;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.concurrent.Callable;
@@ -14,6 +16,7 @@ public class ScenarioController {
     private final ChainServices chain;
     private final ChainBService chainB;
     private final FanoutServices fanout;
+    private final RestTemplate rt = new RestTemplate();
 
     public ScenarioController(ChainServices chain, ChainBService chainB, FanoutServices fanout) {
         this.chain = chain;
@@ -26,6 +29,14 @@ public class ScenarioController {
     public ResponseEntity<String> chain3() {
         String out = chain.a();
         return ResponseEntity.ok("chain:" + out);
+    }
+
+    // Cross-service call to Orders service (propagates traceparent via RestTemplate customizer)
+    @GetMapping("/ordersByUser")
+    public ResponseEntity<String> ordersByUser(@RequestParam("userId") long userId) {
+        String base = System.getProperty("orders.baseUrl", System.getenv().getOrDefault("ORDERS_BASE_URL", "http://localhost:8082"));
+        String body = rt.getForObject(base + "/orders?userId=" + userId, String.class);
+        return ResponseEntity.ok(body);
     }
 
     // 2) fanout: one service calls two services and merges results (parallel)

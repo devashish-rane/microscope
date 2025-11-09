@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: orders-svc
+server:
+  port: 8082
+
+orders:
+  useTestcontainers: true
+
+debugflow:
+  enabled: false
+  ttlMinutes: 20
+  consoleJson: false
+  consolePretty: true
+  color: true
+  prettyFile: ../debugflow-all.log
+  showThread: true
+  showHttp: true
+  micros: true
+  simpleClassNames: true

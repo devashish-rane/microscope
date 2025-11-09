@@ -14,6 +14,17 @@ public class PrettyConsoleExporter implements Exporter {
 
     @Override
     public void export(TraceEvent e) {
+        if ("SQL".equals(e.getType())) {
+            int depth = e.getDepth() != null ? e.getDepth() : 0;
+            String indent = "  ".repeat(Math.max(0, depth));
+            String tid = paint(shortId(e.getTraceId()), ANSI.MAGENTA);
+            String svc = paint(e.getService(), ANSI.CYAN);
+            String sql = e instanceof com.debugflow.core.event.SqlEvent se ? se.getSql() : null;
+            String snippet = sql == null ? "SQL" : truncate(sql, 80);
+            String durStr = colorizeDuration(durationMsOrMicros(e));
+            log.info(String.format("%s• [%s] %s %s %s", indent, tid, svc, paint(snippet, ANSI.BLUE), durStr));
+            return;
+        }
         if (!"FLOW".equals(e.getType())) return; // only FLOW
         int depth = e.getDepth() != null ? e.getDepth() : 0;
         String indent = "  ".repeat(Math.max(0, depth));
@@ -24,11 +35,21 @@ public class PrettyConsoleExporter implements Exporter {
             String line = String.format("%s→ [%s] %s %s", indent, tid, svc, op);
             log.info(line);
         } else if ("END".equals(e.getPhase())) {
-            long dur = e.getDurMs() != null ? e.getDurMs() : -1;
-            String durStr = colorizeDuration(dur);
+            String durStr = colorizeDuration(durationMsOrMicros(e));
             String line = String.format("%s← [%s] %s %s %s", indent, tid, svc, op, durStr);
             log.info(line);
         }
+    }
+
+    private long durationMsOrMicros(TraceEvent e) {
+        if (e.getDurMs() != null && e.getDurMs() > 0) return e.getDurMs();
+        if (e.getDurNs() != null) return Math.max(1, e.getDurNs() / 1000); // treat as µs scale for coloring
+        return -1;
+    }
+
+    private String truncate(String s, int n) {
+        if (s == null) return "";
+        return s.length() > n ? s.substring(0, n - 1) + "…" : s;
     }
 
     private String shortId(String id) {

@@ -18,6 +18,16 @@ public class DebugFlowProperties {
     private boolean color = true;
     /** Optional path to write pretty lines to a file (appended). */
     private String prettyFile;
+    /** Show thread name at end of line in pretty/file output. */
+    private boolean showThread = false;
+    /** Show HTTP method/path/status when available (controller spans). */
+    private boolean showHttp = true;
+    /** Use microseconds for very short durations (<1ms). */
+    private boolean micros = true;
+    /** Render simple class names (strip package) in op. */
+    private boolean simpleClassNames = false;
+    /** Log flows when an inbound traceparent/traceId is present even if session is disabled. */
+    private boolean followInboundTraces = true;
 
     public boolean isEnabled() { return enabled; }
     public void setEnabled(boolean enabled) { this.enabled = enabled; }
@@ -39,4 +49,19 @@ public class DebugFlowProperties {
 
     public String getPrettyFile() { return prettyFile; }
     public void setPrettyFile(String prettyFile) { this.prettyFile = prettyFile; }
+
+    public boolean isShowThread() { return showThread; }
+    public void setShowThread(boolean showThread) { this.showThread = showThread; }
+
+    public boolean isShowHttp() { return showHttp; }
+    public void setShowHttp(boolean showHttp) { this.showHttp = showHttp; }
+
+    public boolean isMicros() { return micros; }
+    public void setMicros(boolean micros) { this.micros = micros; }
+
+    public boolean isSimpleClassNames() { return simpleClassNames; }
+    public void setSimpleClassNames(boolean simpleClassNames) { this.simpleClassNames = simpleClassNames; }
+
+    public boolean isFollowInboundTraces() { return followInboundTraces; }
+    public void setFollowInboundTraces(boolean followInboundTraces) { this.followInboundTraces = followInboundTraces; }
 }

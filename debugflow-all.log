@@ -1,0 +1,9 @@
+2025-11-09 20:00:59     [8afb99ae] target-svc     ScenarioController#ordersByUser  -->  [http-nio-8081-exec-3]
+2025-11-09 20:00:59     [7590358d] orders-svc     OrderController#orders  -->  [http-nio-8082-exec-1]
+2025-11-09 20:00:59       [7590358d] orders-svc     OrderService#listByUser  -->  [http-nio-8082-exec-1]
+2025-11-09 20:00:59         [7590358d] orders-svc     OrderRepo#findByUser  -->  [http-nio-8082-exec-1]
+2025-11-09 20:00:59           [7590358d] orders-svc     SQL SELECT id,user_id,item,amount FROM orders WHERE user_id=?  5ms rows=2
+2025-11-09 20:00:59         [7590358d] orders-svc     OrderRepo#findByUser  <--    7ms  [http-nio-8082-exec-1]
+2025-11-09 20:00:59       [7590358d] orders-svc     OrderService#listByUser  <--   11ms  [http-nio-8082-exec-1]
+2025-11-09 20:00:59     [7590358d] orders-svc     OrderController#orders  <--   16ms  200  [http-nio-8082-exec-1]
+2025-11-09 20:00:59     [8afb99ae] target-svc     ScenarioController#ordersByUser  <--  117ms  200  [http-nio-8081-exec-3]

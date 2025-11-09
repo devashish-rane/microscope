@@ -11,12 +11,16 @@ public class TraceEvent {
     private String service;
     private String op;
     private Long durMs;
+    private Long durNs;
     private String phase; // START | END (for FLOW)
     private Integer depth; // call depth for pretty formatting
     private Boolean error;
     private String errorType;
     private String errorMsg;
     private String thread;
+    private String httpMethod;
+    private String httpPath;
+    private Integer httpStatus;
 
     public static TraceEvent flowEnd(String traceId, String service, String op, long durMs, int depth) {
         TraceEvent e = new TraceEvent();
@@ -56,6 +60,8 @@ public class TraceEvent {
     public void setService(String service) { this.service = service; }
     public void setOp(String op) { this.op = op; }
     public void setDurMs(Long durMs) { this.durMs = durMs; }
+    public Long getDurNs() { return durNs; }
+    public void setDurNs(Long durNs) { this.durNs = durNs; }
     public String getPhase() { return phase; }
     public void setPhase(String phase) { this.phase = phase; }
     public Integer getDepth() { return depth; }
@@ -68,4 +74,10 @@ public class TraceEvent {
     public void setErrorMsg(String errorMsg) { this.errorMsg = errorMsg; }
     public String getThread() { return thread; }
     public void setThread(String thread) { this.thread = thread; }
+    public String getHttpMethod() { return httpMethod; }
+    public void setHttpMethod(String httpMethod) { this.httpMethod = httpMethod; }
+    public String getHttpPath() { return httpPath; }
+    public void setHttpPath(String httpPath) { this.httpPath = httpPath; }
+    public Integer getHttpStatus() { return httpStatus; }
+    public void setHttpStatus(Integer httpStatus) { this.httpStatus = httpStatus; }
 }

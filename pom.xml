@@ -19,6 +19,7 @@
   <modules>
     <module>core</module>
     <module>target_spring_web_project</module>
+    <module>target_orders_service</module>
   </modules>
 
   <dependencyManagement>
@@ -43,6 +44,7 @@
           <configuration>
             <source>${java.version}</source>
             <target>${java.version}</target>
+            <parameters>true</parameters>
           </configuration>
         </plugin>
         <plugin>
@@ -55,4 +57,3 @@
   </build>
 
 </project>
-

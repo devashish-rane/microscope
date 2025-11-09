@@ -10,6 +10,7 @@ import com.debugflow.core.exporter.FilePrettyExporter;
 import com.debugflow.core.session.SessionManager;
 import com.debugflow.core.web.SessionController;
 import com.debugflow.core.web.TraceContextFilter;
+import com.debugflow.core.web.TracePropagation;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -61,15 +62,21 @@ public class DebugFlowAutoConfiguration {
     @Bean
     @ConditionalOnProperty(prefix = "debugflow", name = "prettyFile")
     public Exporter filePrettyExporter(DebugFlowProperties props) {
-        return new FilePrettyExporter(java.nio.file.Path.of(props.getPrettyFile()));
+        return new FilePrettyExporter(
+                java.nio.file.Path.of(props.getPrettyFile()),
+                props.isShowThread(),
+                props.isShowHttp(),
+                props.isMicros(),
+                props.isSimpleClassNames());
     }
 
     @Bean
     @ConditionalOnMissingBean
     public FlowAspect flowAspect(SessionManager sessionManager,
                                  EventBus eventBus,
-                                 @Value("${spring.application.name:unknown-service}") String serviceName) {
-        return new FlowAspect(sessionManager, eventBus, serviceName);
+                                 @Value("${spring.application.name:unknown-service}") String serviceName,
+                                 DebugFlowProperties props) {
+        return new FlowAspect(sessionManager, eventBus, serviceName, props.isFollowInboundTraces());
     }
 
     @Bean
@@ -89,5 +96,11 @@ public class DebugFlowAutoConfiguration {
     @ConditionalOnMissingBean(TaskDecorator.class)
     public TaskDecorator debugflowMdcTaskDecorator() {
         return new MdcTaskDecorator();
+    }
+
+    @Bean
+    public TracePropagation tracePropagationCustomizer(EventBus eventBus,
+                                                       @Value("${spring.application.name:unknown-service}") String serviceName) {
+        return new TracePropagation(eventBus, serviceName);
     }
 }

@@ -18,9 +18,14 @@ help:
 	@echo "  run             Run CRUD app in foreground"
 	@echo "  start           Start CRUD app in background (spring-boot:start)"
 	@echo "  stop            Stop background app (spring-boot:stop)"
+	@echo "  start-orders    Start Orders service (8082)"
+	@echo "  stop-orders     Stop Orders service"
+	@echo "  start-all       Start both services"
+	@echo "  stop-all        Stop both services"
 	@echo "  restart         Restart background app"
 	@echo "  session-status  Get DebugFlow session status"
 	@echo "  enable-session  Enable DebugFlow session (TTL minutes via TTL?=$(TTL))"
+	@echo "  enable-session-orders  Enable session on Orders service"
 	@echo "  create-user     Create user (NAME?=$(NAME), EMAIL?=$(EMAIL))"
 	@echo "  list-users      List users"
 	@echo "  get-user        Get user by ID (ID?=$(ID))"
@@ -31,6 +36,8 @@ help:
 	@echo "  watch-logs      Tail app logs"
 	@echo "  grep-flow       Show DebugFlow lines in logs"
 	@echo "  flow-log        Tail pretty flow file (debugflow.log)"
+	@echo "  flow-log-all    Tail combined pretty flow file (debugflow-all.log)"
+	@echo "  flow-trace      Show lines for a traceId (TID) from combined log"
 	@echo "  s-chain3        Hit 3-service chain scenario"
 	@echo "  s-fanout        Hit fanout/merge scenario (parallel)"
 	@echo "  s-callable      Hit callable MVC async scenario"
@@ -66,6 +73,9 @@ session-status:
 
 enable-session:
 	curl -sS -X POST $(URL)/api/session/enable -H 'Content-Type: $(JSON)' -d '{"ttlMinutes":'$(TTL)'}'
+
+enable-session-orders:
+	curl -sS -X POST http://localhost:8082/api/session/enable -H 'Content-Type: $(JSON)' -d '{"ttlMinutes":'$(TTL)'}'
 
 create-user:
 	curl -sS -X POST $(URL)/users -H 'Content-Type: $(JSON)' -d '{"name":"$(NAME)","email":"$(EMAIL)"}'
@@ -129,6 +139,16 @@ flow-log:
 		{ [ -f target_spring_web_project/debugflow.log ] && tail -f target_spring_web_project/debugflow.log; } || tail -f debugflow.log; \
 	fi
 
+flow-log-all:
+	@tail -f debugflow-all.log 2>/dev/null || echo "No debugflow-all.log yet. Start services and enable session."
+
+flow-trace:
+	@if [ -z "$(TID)" ]; then echo "Usage: make flow-trace TID=<traceId-prefix-8>"; exit 1; fi; \
+	grep -E "\[\s*$(TID)\]" debugflow-all.log | sed -n '1,200p'
+
+flow-log-orders:
+	@cd target_orders_service && { tail -f debugflow.log 2>/dev/null || echo "No debugflow.log yet in orders service"; }
+
 s-chain3:
 	curl -sS $(URL)/scenarios/chain3
 
@@ -143,3 +163,20 @@ s-exception:
 
 s-async:
 	curl -sS $(URL)/scenarios/async
+
+s-xsvc:
+	curl -sS "$(URL)/scenarios/ordersByUser?userId=1"
+start-orders:
+	@echo "Starting Orders service (spring-boot:start) on http://localhost:8082"
+	$(MVN) -q -pl target_orders_service spring-boot:start
+
+stop-orders:
+	@echo "Stopping Orders service (spring-boot:stop)"
+	$(MVN) -q -pl target_orders_service spring-boot:stop || true
+	@if lsof -iTCP:8082 -sTCP:LISTEN -t >/dev/null 2>&1; then \
+		echo "Killing process on port 8082"; \
+		kill $$(lsof -iTCP:8082 -sTCP:LISTEN -t) || true; \
+	fi
+
+start-all: start start-orders
+stop-all: stop stop-orders
